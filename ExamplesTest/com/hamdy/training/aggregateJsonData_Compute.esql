@@ -1,0 +1,25 @@
+BROKER SCHEMA com.hamdy.training
+
+
+CREATE COMPUTE MODULE aggregateJsonData_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		DECLARE inputRef REFERENCE TO InputRoot.JSON.Data.Item;
+		
+		DECLARE groupedData Row;
+		WHILE LASTMOVE(inputRef) DO
+			
+			DECLARE dept CHARACTER inputRef.Department;
+			SET groupedData.{dept}.totalPrice= COALESCE(groupedData.{dept}.totalPrice,0)+inputRef.Salary;
+			
+			MOVE inputRef NEXTSIBLING;
+		END WHILE;
+		
+		SET OutputRoot.JSON.Data.Departments = groupedData;
+		
+		
+		RETURN TRUE;
+	END;
+
+END MODULE;

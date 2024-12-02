@@ -1,0 +1,41 @@
+BROKER SCHEMA com.hamdy.training
+
+
+CREATE COMPUTE MODULE filterRecord_Compute1
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		DECLARE employeeListRef REFERENCE TO InputRoot.XMLNSC.EmployeeList.Employee;
+		
+		CREATE FIELD OutputRoot.XMLNSC.Employees;
+		DECLARE outputEmployeesRef REFERENCE TO OutputRoot.XMLNSC.Employees;
+		
+		DECLARE index INTEGER 1;
+		
+		While LASTMOVE(employeeListRef)DO
+			
+			IF employeeListRef.Department = 'HR' THEN		
+				SET outputEmployeesRef.Employee[index] = employeeListRef;
+				SET index= index+1;
+			END IF;
+			
+			MOVE employeeListRef NEXTSIBLING;
+		END While;	
+		
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE CopyMessageHeaders() BEGIN
+		DECLARE I INTEGER 1;
+		DECLARE J INTEGER;
+		SET J = CARDINALITY(InputRoot.*[]);
+		WHILE I < J DO
+			SET OutputRoot.*[I] = InputRoot.*[I];
+			SET I = I + 1;
+		END WHILE;
+	END;
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;

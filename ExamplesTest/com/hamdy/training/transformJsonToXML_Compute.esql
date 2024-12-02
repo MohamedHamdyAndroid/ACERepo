@@ -1,0 +1,14 @@
+BROKER SCHEMA com.hamdy.training
+
+
+CREATE COMPUTE MODULE transformJsonToXML_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		SET OutputRoot.XMLNSC.Order.OrderID = InputRoot.JSON.Data.OrderID;
+    	SET OutputRoot.XMLNSC.Order.Customer.Name = InputRoot.JSON.Data.CustomerName;
+    	SET OutputRoot.XMLNSC.Order.Amount = InputRoot.JSON.Data.OrderAmount;
+		
+		RETURN TRUE;
+	END;
+END MODULE;

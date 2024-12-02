@@ -1,0 +1,23 @@
+BROKER SCHEMA com.hamdy.training
+
+
+CREATE COMPUTE MODULE testToJsonArray_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		DECLARE field1 REFERENCE TO InputRoot.DFDL.testCSVModel.record.field1;
+		DECLARE field2 REFERENCE TO InputRoot.DFDL.testCSVModel.record.field2;
+		DECLARE field3 REFERENCE TO InputRoot.DFDL.testCSVModel.record.field3;
+		
+		CREATE FIELD OutputRoot.JSON.Data.Fruits IDENTITY(JSON.Array) Fruits;
+		
+		DECLARE outRef REFERENCE TO OutputRoot.JSON.Data.Fruits;
+		SET outRef.Item[1]=field1;
+		SET outRef.Item[2]=field2;
+		SET outRef.Item[3]=field3;
+				
+		RETURN TRUE;
+	END;
+
+	
+END MODULE;

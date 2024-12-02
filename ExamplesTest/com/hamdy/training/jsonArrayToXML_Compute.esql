@@ -1,0 +1,25 @@
+BROKER SCHEMA com.hamdy.training
+
+
+CREATE COMPUTE MODULE jsonArrayToXML_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		DECLARE inputRef REFERENCE TO InputRoot.JSON.Data.Employees.Item;
+		CREATE FIELD OutputRoot.XMLNSC.Employees;
+		
+		DECLARE outRef REFERENCE TO OutputRoot.XMLNSC.Employees;
+		
+		DECLARE index INTEGER 1;
+		WHILE LASTMOVE(inputRef) DO
+			SET outRef.Employee[index].Name= inputRef.Name;
+			SET outRef.Employee[index].Age= inputRef.Age;
+			
+			SET index = index+1;
+			MOVE inputRef NEXTSIBLING;
+		END WHILE;
+		
+		RETURN TRUE;
+	END;
+
+END MODULE;

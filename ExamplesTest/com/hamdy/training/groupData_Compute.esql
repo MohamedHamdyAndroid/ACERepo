@@ -1,0 +1,26 @@
+BROKER SCHEMA com.hamdy.training
+
+
+CREATE COMPUTE MODULE groupData_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		DECLARE inputRef REFERENCE TO InputRoot.JSON.Data.Item;
+		CREATE FIELD OutputRoot.JSON.Data.Orders IDENTITY(JSON.Array)Orders;
+		DECLARE ordersOutRef REFERENCE TO OutputRoot.JSON.Data.Orders;
+		
+			
+		DECLARE index INTEGER 1;
+		WHILE LASTMOVE(inputRef) DO
+			
+			SET ordersOutRef.Item[index] = inputRef.OrderID;			
+			SET index = index+1;
+			
+			MOVE inputRef NEXTSIBLING;
+		END WHILE;
+		
+		RETURN TRUE;
+	END;
+
+	
+END MODULE;
